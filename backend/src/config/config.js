@@ -12,6 +12,8 @@ dotenv.config();
   urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
   RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID, // Add here
   RAZORPAY_SECRET: process.env.RAZORPAY_SECRET, // Add here
+  OTP_EMAIL: process.env.OTP_EMAIL, // Add here
+  OTP_PASSWORD: process.env.OTP_PASSWORD, // Add here
 }
 
 // console.log(process.env.GEMINI_API_KEY)

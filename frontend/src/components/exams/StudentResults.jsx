@@ -45,7 +45,7 @@ const StudentResults = () => {
 
     fetchData();
   }, []);
-console.log(results);
+// console.log(results);
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex-1">
       <div className="px-4 sm:px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">

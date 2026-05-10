@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  frontend:
+    build: ./frontend
+    container_name: frontend
+
+    ports:
+      - "127.0.0.1:3000:80"
+
+  backend:
+    build: ./backend
+    container_name: backend
+
+    ports:
+      - "127.0.0.1:2000:2000"
+
+    env_file:
+      - ./backend/.env

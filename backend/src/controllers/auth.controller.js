@@ -3,6 +3,8 @@ import Attendance from '../models/qrModel.js';
 import jwt from 'jsonwebtoken';
 import cookies from 'cookie-parser';
 import bcrypt from "bcryptjs";
+import {config }from '../config/config.js';
+import { transporter } from '../utils/emailotpsend.js';
 
 
 
@@ -27,6 +29,41 @@ export const registerUser = async (req, res) => {
       class: studentClass,
       otp,
     });
+
+    const mailOptions = {
+    from: config.OTP_EMAIL,
+    to: user.email,
+    subject: "🔐 Your Verification Code - ExamiSystem",
+    html: `
+      <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <div style="background-color: #4F46E5; padding: 30px; text-align: center;">
+          <h1 style="color: white; margin: 0; font-size: 28px; letter-spacing: 1px;">ExamiSystem</h1>
+        </div>
+        <div style="padding: 40px; background-color: #ffffff;">
+          <h2 style="color: #333; margin-top: 0;">Hello ${user.name},</h2>
+          <p style="color: #666; font-size: 16px; line-height: 1.6;">Thank you for joining ExamiSystem! To complete your registration and secure your account, please use the following verification code:</p>
+          <div style="text-align: center; margin: 40px 0;">
+            <div style="display: inline-block; background-color: #f3f4f6; padding: 20px 40px; border-radius: 10px; border: 2px dashed #4F46E5;">
+              <span style="font-size: 36px; font-weight: bold; color: #4F46E5; letter-spacing: 10px;">${otp}</span>
+            </div>
+          </div>
+          <p style="color: #666; font-size: 14px; line-height: 1.5;">This code will expire shortly. If you did not request this code, please ignore this email.</p>
+          <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
+          <p style="color: #999; font-size: 12px; text-align: center;">&copy; ${new Date().getFullYear()} ExamiSystem. All rights reserved.</p>
+        </div>
+      </div>
+    `,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error("Error sending email: ", error);
+      res.status(500).send("Error sending email");
+    } else {
+      console.log("Email sent: ", info.response);
+      res.send("Email sent successfully");
+    }
+  });
 
     // TODO: send email (we add next step)
     console.log("Account OTP:", otp);
@@ -95,7 +132,7 @@ export const loginUser = async (req, res) => {
     );
 res.cookie("token", token, { httpOnly: true });
 
-console.log("Login token:", token);
+// console.log("Login token:", token);
     res.json({
       token,
       user,

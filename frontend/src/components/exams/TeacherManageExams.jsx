@@ -8,7 +8,7 @@ const TeacherManageExams = () => {
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState(null);
   const [expandedExamId, setExpandedExamId] = useState(null);
-  console.log(prompt);
+  // console.log(prompt);
   const toggleExamExpand = (id) => {
     if (expandedExamId === id) {
       setExpandedExamId(null);
