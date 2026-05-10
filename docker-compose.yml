@@ -1,19 +1,16 @@
-version: "3"
+version: "3.8"
 
 services:
   frontend:
-    build: ./frontend
-    container_name: frontend
-
+    image: keshab232002/ai-frontend
     ports:
-      - "127.0.0.1:3000:80"
+      - "3000:80"
+    depends_on:
+      - backend
 
   backend:
-    build: ./backend
-    container_name: backend
-
+    image: keshab232002/ai-backend
     ports:
       - "127.0.0.1:2000:2000"
-
     env_file:
       - ./backend/.env
