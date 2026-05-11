@@ -39,7 +39,7 @@ function StudentQR({ user }) {
           {/* QR Code Section */}
           <div className="p-4 bg-white rounded-2xl shadow-inner border border-gray-100">
             <QRCodeSVG 
-              value={user._id} 
+              value={JSON.stringify({ id: user._id, email: user.email })} 
               size={180} 
               level="H" // High error correction so it scans easily even if slightly covered
               className="mx-auto"

@@ -282,7 +282,16 @@ export const getResultsForTeacher = async (req, res) => {
 
 export const markAttendance = async (req, res) => {
   try {
-    const { userId } = req.body;
+    let { userId } = req.body;
+    
+    // Check if userId is a JSON string (from the updated QR code)
+    try {
+      const parsed = JSON.parse(userId);
+      if (parsed.id) userId = parsed.id;
+    } catch (e) {
+      // If not JSON, assume it's the raw ID
+    }
+
     const teacherClass = req.user.class; // Get the logged-in teacher's class
 
     // 1. Find the student in the database
@@ -291,8 +300,8 @@ export const markAttendance = async (req, res) => {
       return res.status(404).json({ error: "Student not found" });
     }
 
-    // 2. Security Check: Block if classes don't match
-    if (student.class !== teacherClass) {
+    // 2. Security Check: Block if classes don't match (Case-insensitive)
+    if (student.class.toString().trim().toLowerCase() !== teacherClass.toString().trim().toLowerCase()) {
       return res.status(403).json({ 
         error: `Cannot mark attendance. Student is in class ${student.class}, but you manage class ${teacherClass}.` 
       });
@@ -367,16 +376,41 @@ export const getPaymentStatusByExam = async (req, res) => {
   }
 };
 
+// export const getAttendanceList = async (req, res) => {
+//   try {
+//     const { date } = req.query;
+//     const queryDate = date || new Date().toDateString();
+
+//     const attendances = await Attendance.find({ date: queryDate })
+//       .populate("userId", "name email class role")
+//       .sort({ _id: -1 }); // newest first
+
+//     res.json(attendances);
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
+
 export const getAttendanceList = async (req, res) => {
   try {
     const { date } = req.query;
+    const teacherClass = req.user.class; // Get teacher's class
     const queryDate = date || new Date().toDateString();
 
+    // Find attendance records
     const attendances = await Attendance.find({ date: queryDate })
-      .populate("userId", "name email class role")
-      .sort({ _id: -1 }); // newest first
+      .populate({
+        path: "userId",
+        match: { class: teacherClass }, // Only include students from this teacher's class
+        select: "name email class role"
+      })
+      .sort({ _id: -1 });
 
-    res.json(attendances);
+    // Filter out records where userId is null (students not in teacher's class)
+    const filteredAttendances = attendances.filter(a => a.userId !== null);
+
+    res.json(filteredAttendances);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

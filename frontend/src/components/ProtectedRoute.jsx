@@ -1,16 +1,13 @@
 import { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router";
-import axios from "axios";
+import { authApi } from "../api/index";
 
 const ProtectedRoute = ({ allowedRoles = [] }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 //  console.log ("Allowed Roles in ProtectedRoute:", allowedRoles);
   useEffect(() => {
-    // You may need to update the URL to your actual endpoint, e.g. "http://localhost:5000/api/auth/me"
-    axios.get("http://localhost:2000/api/auth/me", {
-      withCredentials: true
-    })
+    authApi.getMe()
     .then(res => {
       setUser(res.data.user);
       setLoading(false);
