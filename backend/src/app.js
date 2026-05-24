@@ -17,7 +17,7 @@ const app = express();
 // });
 app.use(cors({
   origin: function (origin, callback) {
-    const allowed = ["http://localhost:5173", "http://localhost:5174",'http://localhost:80',"http://localhost:3000","http://65.1.2.26","http://65.1.2.26","https://exam.firstjobkhabar.com"];
+    const allowed = ["http://localhost:5173", "http://localhost:5174",'http://localhost:80',"http://localhost:3000","http://13.232.138.132","http://13.232.138.132","https://examisystem.firstjobkhabar.com"];
     if (!origin || allowed.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
